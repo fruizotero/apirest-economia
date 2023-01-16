@@ -1,54 +1,79 @@
 <?php
 require_once "modules/queries_all.php";
 require_once "modules/functions_util.php";
+require_once "modules/queries_users.php";
 
 
 $queries = new Queries_All();
+$user = new LoginRegister();
 
 
-//$queries->queryGet("categories", "category_id_user", 1);
-//$queries->queryGet("invoices", "invoice_user_id", 1);
-//$queries->queryGet("users", "user_email", "frank@gmail.com");
-$arrayUser = array(
-    "user_email" => "juan@gmail.com",
-    "user_pass" => "123456"
-);
-$arrayCategories = array(
-    "category_name" => "apuestas",
-    "category_expense_type" => 0,
-    "category_user_id" => 3
-);
-$arrayInvoices = array(
-    "invoice_amount" => 80,
-    "invoice_description" => "apostando en casino",
-    "invoice_user_id" => 3,
-    "invoice_category_id" => 5
-);
 
-$arrayPutUsers = array(
-    "user_email" => "eduardo@gmai.com"
-);
+$uri = $_SERVER["REQUEST_URI"];
+$data = json_decode(file_get_contents('php://input'), true);
 
-$arrayPutInvoices = array(
-    "invoice_description" => "casino"
-);
+if ($_SERVER["REQUEST_METHOD"] == "POST" && str_contains($uri, "login")) {
+    $user->login($data);
+}
 
-$arrayPutCategorie = array(
-    "category_expense_type" => 0
-);
-
-// $queries->queryPut($arrayPutCategorie, "categories", "category_id", 2);
-//$queries->queryPost($arrayInvoices, "invoices");
-// $queries->queryPut($arrayPutUsers, "users", "user_id", 2);
-//$queries->queryPut($arrayPutInvoices, "invoices", "invoice_id", 3);
-//$queries->queryDelete("categories","category_id", 4 );
-
-//USER (Login)
-
-//USER (register)
-
+if ($_SERVER["REQUEST_METHOD"] == "POST" && str_contains($uri, "register")) {
+    $data["user_pass"] = password_hash($data["user_pass"], PASSWORD_DEFAULT);
+    $queries->queryPost($data, "users");
+}
 
 //TOKEN VALID
+
+
+
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+
+    if (str_contains($uri, "invoices") && isset($_GET["invoice_user_id"])) {
+        $id = $_GET["invoice_user_id"];
+        $queries->queryGet("invoices", "invoice_user_id", $id);
+    }
+
+    if (str_contains($uri, "categories") && isset($_GET["category_user_id"])) {
+        $id = $_GET["category_user_id"];
+        $queries->queryGet("categories", "category_user_id", $id);
+    }
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    if (str_contains($uri, "invoices")) {
+        $queries->queryPost($data, "invoices");
+    }
+
+    if (str_contains($uri, "categories")) {
+        $queries->queryPost($data, "categories");
+    }
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "PUT") {
+
+    if (str_contains($uri, "invoices") && isset($_GET["invoice_id"])) {
+        $id = $_GET["invoice_id"];
+        $queries->queryPut($data, "invoices", "invoice_id", $id);
+    }
+
+    if (str_contains($uri, "categories") && isset($_GET["category_id"])) {
+        $id = $_GET["category_id"];
+        $queries->queryPut($data, "categories", "category_id", $id);
+    }
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
+
+    if (str_contains($uri, "invoices") && isset($_GET["invoice_id"])) {
+        $id = $_GET["invoice_id"];
+        $queries->queryDelete("invoices", "invoice_id", $id);
+    }
+
+    if (str_contains($uri, "categories") && isset($_GET["category_id"])) {
+        $id = $_GET["category_id"];
+        $queries->queryDelete("categories", "category_id", $id);
+    }
+}
 
 //GET
 
