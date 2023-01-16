@@ -28,14 +28,12 @@ class LoginRegister extends Connection
 
                 $result = $stmt->setFetchMode(PDO::FETCH_ASSOC);
                 $user = $stmt->fetchAll();
-
                 $user_id = $user[0]["user_id"];
                 $user_email = $user[0]["user_email"];
                 $user_pass = $user[0]["user_pass"];
 
                 //SE COMPRUEBA CONTRASEÑA
                 $verify = password_verify($pass_request, $user_pass);
-
                 if ($verify) {
                     $tokenArray = $this->jwtToken($user_id, $user_email);
                     $key = "dmekme3883mdkemdkk939k3dkdkmkdmkmc";
@@ -100,5 +98,39 @@ class LoginRegister extends Connection
             ]
         );
         return $token;
+    }
+
+    function checkToken()
+    {
+        // $queries = new Queries_All();
+
+        $headers = getallheaders();
+        $isValid = false;
+
+        if (isset($headers["token"])) {
+            $token = $headers["token"];
+
+            try {
+                $query = "SELECT * FROM users WHERE user_token=:user_token";
+                $stmt = $this->conn_db->prepare($query);
+                $stmt->bindParam(":user_token", $token);
+
+                $sucess = $stmt->execute();
+                $rows = $stmt->rowCount();
+
+
+                if ($sucess && $rows > 0) {
+                    $isValid = true;
+                } else {
+                    $isValid = false;
+                }
+            } catch (\Throwable $th) {
+                Response::$resp["message"] = $th->getMessage();
+                Response::response_500();
+            } finally {
+                $this->conn_db = null;
+            }
+        }
+        return $isValid;
     }
 }

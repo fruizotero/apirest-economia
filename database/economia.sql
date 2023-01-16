@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS `users`(
 `user_pass` varchar(100) NOT NULL,
 `user_token` text NULL,
 `user_token_expiration` datetime NULL,
+`user_admin` varchar(100) NULL, 
 PRIMARY KEY (user_id)
 )ENGINE=INNODB DEFAULT CHARSET=UTF8;
 
@@ -37,14 +38,16 @@ FOREIGN KEY (invoice_category_id) references categories(category_id) on delete c
 
 )ENGINE=INNODB DEFAULT CHARSET=UTF8;
 
-INSERT INTO USERS (USER_EMAIL, USER_PASS) VALUES("frank@gmail.com", 123456);
-INSERT INTO USERS (USER_EMAIL, USER_PASS) VALUES("edgar@gmail.com", 123456);
+#user: admin_site@gmail.com
+#pass: Administrador_site.12 
+INSERT INTO USERS (USER_EMAIL, USER_PASS) VALUES("admin_site@gmail.com", "$2y$10$XjthLnAVCjP7AOVTzSpOU.Nq4s1PhMvxJ2GsD7xeBDuhOLCN4bWMK");
+#INSERT INTO USERS (USER_EMAIL, USER_PASS) VALUES("edgar@gmail.com", 123456);
 
-insert into categories (category_name,category_expense_type, category_user_id) values("gastos", 0,  1);
-insert into categories (category_name,category_expense_type, category_user_id) values("ingresos", 1,  1);
+#insert into categories (category_name,category_expense_type, category_user_id) values("gastos", 0,  1);
+#insert into categories (category_name,category_expense_type, category_user_id) values("ingresos", 1,  1);
 
-insert into categories (category_name,category_expense_type, category_user_id) values("gastos", 0, 2);
-insert into categories (category_name,category_expense_type, category_user_id) values("ingresos", 1, 2);
+#insert into categories (category_name,category_expense_type, category_user_id) values("gastos", 0, 2);
+#insert into categories (category_name,category_expense_type, category_user_id) values("ingresos", 1, 2);
 
-insert into invoices(invoice_amount, invoice_user_id, invoice_category_id) values(19.8, 1, 1);
-insert into invoices(invoice_amount, invoice_user_id, invoice_category_id) values(10.8, 1, 2);
+#insert into invoices(invoice_amount, invoice_user_id, invoice_category_id) values(19.8, 1, 1);
+#insert into invoices(invoice_amount, invoice_user_id, invoice_category_id) values(10.8, 1, 2);
