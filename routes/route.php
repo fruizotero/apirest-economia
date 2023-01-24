@@ -2,20 +2,15 @@
 require_once "modules/queries_all.php";
 require_once "modules/functions_util.php";
 require_once "modules/queries_users.php";
+require_once "modules/queries_invoices.php";
 
 
 $queries = new Queries_All();
 $user = new LoginRegister();
-
+$invoices = new Invoices();
 
 $uri = $_SERVER["REQUEST_URI"];
 $data = json_decode(file_get_contents('php://input'), true);
-
-//LOGIN
-// if ($_SERVER["REQUEST_METHOD"] == "POST" && str_contains($uri, "login")) {
-//     $user->login($data);
-// }
-//REGISTER
 
 //GET
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
@@ -23,13 +18,29 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $token = $user->checkToken();
     if (!$token) {
         Response::$resp["message"] = "Token no válido";
-        Response::response_500();
+        Response::$resp["ok"] = false;
+        Response::response_200();
         return;
     }
 
-    if (str_contains($uri, "invoices") && isset($_GET["invoice_user_id"])) {
+    if (str_contains($uri, "users")) {
+        Response::$resp["message"] = "Token válido";
+        Response::response_200();
+        return;
+    }
+
+    if (str_contains($uri, "invoices") && isset($_GET["invoice_user_id"]) && isset($_GET["invoice_date"])) {
         $id = $_GET["invoice_user_id"];
-        $queries->queryGet("invoices", "invoice_user_id", $id);
+        $date = $_GET["invoice_date"];
+        $invoices->queryInvoicesUserNow("invoices", "invoice_user_id", $id, "invoice_date", $date);
+        // $queries->queryGet("invoices", "invoice_user_id", $id);
+    }
+
+    if (str_contains($uri, "invoicesdates") && isset($_GET["date_begin"]) && isset($_GET["date_final"]) && isset($_GET["invoice_user_id"])) {
+        $id = $_GET["invoice_user_id"];
+        $date1 = $_GET["date_begin"];
+        $date2 = $_GET["date_final"];
+        $invoices->queryInvoicesBetweenDates("invoices", $id, $date1,  $date2);
     }
 
     if (str_contains($uri, "categories") && isset($_GET["category_user_id"])) {

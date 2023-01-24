@@ -39,7 +39,9 @@ class Response
             self::$resp["rows_affected"] = $rowsAffected;
             self::response_200();
         } else {
-            self::response_500();
+            self::$resp["ok"] = false;
+            self::$resp["rows_affected"] = $rowsAffected;
+            self::response_200();
         }
     }
 }

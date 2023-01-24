@@ -31,6 +31,7 @@ class LoginRegister extends Connection
                 $user_id = $user[0]["user_id"];
                 $user_email = $user[0]["user_email"];
                 $user_pass = $user[0]["user_pass"];
+                $user_admin = $user[0]["user_admin"];
 
                 //SE COMPRUEBA CONTRASEÑA
                 $verify = password_verify($pass_request, $user_pass);
@@ -54,6 +55,7 @@ class LoginRegister extends Connection
                             Response::$resp["result"] = array(
                                 "user_id" => $user_id,
                                 "user_email" => $user_email,
+                                "user_admin" => $user_admin,
                                 "user_token" => $jwtToken
                             );
                             Response::sucessResponse(true, $rows_update);
@@ -121,6 +123,7 @@ class LoginRegister extends Connection
 
                 if ($sucess && $rows > 0) {
                     $isValid = true;
+                    Response::$resp["rows_affected"] = $rows;
                 } else {
                     $isValid = false;
                 }

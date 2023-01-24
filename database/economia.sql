@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `users`(
 `user_pass` varchar(100) NOT NULL,
 `user_token` text NULL,
 `user_token_expiration` datetime NULL,
-`user_admin` varchar(100) NULL, 
+`user_admin` tinyint(4) NULL, 
 PRIMARY KEY (user_id)
 )ENGINE=INNODB DEFAULT CHARSET=UTF8;
 
